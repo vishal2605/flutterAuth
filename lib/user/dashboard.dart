@@ -1,4 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import '../Pages2/home_pages.dart';
 
 class Dashboard extends StatefulWidget {
   Dashboard({Key? key}) : super(key: key);
@@ -8,14 +10,29 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-          child: Text(
-            'Dashboard',
-            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-          )),
+    return FutureBuilder(
+      future: _initialization,
+      builder: (context, snapshot) {
+        // CHeck for Errors
+        if (snapshot.hasError) {
+          print("Something went Wrong");
+        }
+        // once Completed, show your application
+        if (snapshot.connectionState == ConnectionState.done) {
+          return MaterialApp(
+            title: 'Flutter Firestore CRUD',
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+            ),
+            debugShowCheckedModeBanner: false,
+            home: HomePage(),
+          );
+        }
+        return CircularProgressIndicator();
+      },
     );
   }
 }
